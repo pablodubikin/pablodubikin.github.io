@@ -110,7 +110,7 @@ function showInfo(text, iconName, linkPrefix){
   }
 
   divInfo.innerHTML = `
-    <div class="mb-3">${text}</div>
+    <div class="mb-3 lead">${text}</div>
     <div style="display: flex; justify-content: space-around;">
       <i class="bi bi-clipboard" onclick="copyFn(this, '${text}')"></i>
       <a href="${linkPrefix}:${text}"><i class="bi bi-${iconName}" style="color: white;"></i></a>
