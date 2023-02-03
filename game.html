@@ -1,0 +1,144 @@
+<canvas id="myCanvas">
+</canvas>
+
+<script type="text/javascript">
+
+	const FLOOR_Y = 400;
+	const INITIAL_PLAYER_Y = FLOOR_Y - 150;
+
+	var stop = false;
+	var c = document.getElementById("myCanvas");
+	var ctx = c.getContext("2d");
+
+	var obstacles = [createObstacle()];
+
+	let gameRun;
+
+	let speed = 0;
+
+	var pressingDown = false;
+	var blocked = false;
+
+	let player = {
+		x: 100,
+		y: INITIAL_PLAYER_Y,
+		width: 50,
+		height: 150,
+		color: "DarkSalmon"
+	}
+
+	setUp();
+	paintBackground();
+	paintPlayer();
+
+	function paintPlayer(){
+		ctx.fillStyle = player.color;
+		ctx.fillRect(player.x, player.y, player.width, player.height)
+	}
+
+	function updatePlayer(){
+
+		if(player.y<=0){
+			blocked = true;
+		}
+
+		if(pressingDown==true && blocked==false){
+			player.y -= 10;
+		} else if(player.y<calculateCurrentFloor()){
+			player.y += 6;
+		} else if(player.y>calculateCurrentFloor()) {
+			player.y = INITIAL_PLAYER_Y;
+		}
+
+		if(player.y==INITIAL_PLAYER_Y) blocked = false;
+	}
+
+	function calculateCurrentFloor(){
+		for(let obstacle of obstacles)
+			if(obstacleWithinView(obstacle) &&
+				player.x+player.width>obstacle.x || player.x < obstacle.x+obstacle.width)
+				return FLOOR_Y - obstacle.height;
+		return FLOOR_Y;
+	}
+
+	function obstacleWithinView(obstacle){
+		if(obstacle.x+obstacle.width < 0 || obstacle.x > 500)
+			return false;
+		return true;
+	}
+
+	function paintObstacles(){
+		for(let obstacle of obstacles){
+			ctx.fillStyle = obstacle.color;
+			ctx.fillRect(obstacle.x, FLOOR_Y-obstacle.height, obstacle.width, obstacle.height)
+		}
+	}
+
+	function updateObstacles(){
+		for(let obstacle of obstacles){
+			obstacle.x -= 3;
+		}
+	}
+
+	function paintBackground(){
+		ctx.fillStyle = "lightblue"
+		ctx.fillRect(0, 0, 500, FLOOR_Y);
+		ctx.fillStyle = "lightgreen"
+		ctx.fillRect(0, FLOOR_Y, 500, 500);
+	}
+
+	function setUp(){
+		c.width = 500;
+		c.height = 500;
+	}
+
+	function createObstacle(){
+		var newObstacle = {};
+		newObstacle.height = 100;
+		newObstacle.width = 100;
+		newObstacle.color = "brown";
+		newObstacle.x = 500;
+		return newObstacle;
+	}
+
+	function startGame(){
+		gameRun = setInterval(function(){
+				setUp();
+				paintBackground();
+				paintObstacles();
+				updateObstacles();
+				updatePlayer();
+				paintPlayer();
+				console.log("Hey");
+			}, 10);
+	}
+
+	function stopGame(){
+		clearInterval(gameRun);
+		gameRun = null;
+	}
+
+	document.body.onkeydown = function(e) {
+		if ( (e.key == " " || e.code == "Space" || e.keyCode == 32)
+				&& blocked==false ) {
+			pressingDown = true;
+		}
+	}
+
+	document.body.onkeyup = function(e) {
+	  if (e.key == " " || e.code == "Space" || e.keyCode == 32 ) {
+	  	pressingDown = false;
+	  } else if(e.keyCode==13){
+	  	if(!gameRun)
+	  		startGame();
+	  	else
+	    	stopGame();
+	  }
+	}
+</script>
+
+<style type="text/css">
+	canvas {
+		border: 1px solid black;
+	}
+</style>
