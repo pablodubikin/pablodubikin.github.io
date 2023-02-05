@@ -5,12 +5,14 @@
 
 	const FLOOR_Y = 400;
 	const INITIAL_PLAYER_Y = FLOOR_Y - 150;
+const minWidth = 40;
+const maxWidth = 150;
 
 	var stop = false;
 	var c = document.getElementById("myCanvas");
 	var ctx = c.getContext("2d");
 
-	var obstacles = [createObstacle()];
+	var obstacles = [createObstacle(0)];
 
 	let gameRun;
 
@@ -36,33 +38,37 @@
 		ctx.fillRect(player.x, player.y, player.width, player.height)
 	}
 
+	// Chat GPT
 	function updatePlayer(){
-
-		if(player.y<=0){
+		if (player.y <= 0) {
 			blocked = true;
 		}
-
-		if(pressingDown==true && blocked==false){
+		if (pressingDown && !blocked) {
 			player.y -= 10;
-		} else if(player.y<calculateCurrentFloor()){
-			player.y += 6;
-		} else if(player.y>calculateCurrentFloor()) {
-			player.y = INITIAL_PLAYER_Y;
+		} else {
+			const currentFloor = calculateCurrentFloor();
+			if (player.y + player.height < currentFloor) {
+				player.y += 6;
+			} else if (player.y + player.height > currentFloor) {
+				player.y = currentFloor - player.height;
+			}
+			if (player.y == INITIAL_PLAYER_Y) {
+				blocked = false;
+			}
 		}
-
-		if(player.y==INITIAL_PLAYER_Y) blocked = false;
 	}
 
 	function calculateCurrentFloor(){
 		for(let obstacle of obstacles)
 			if(obstacleWithinView(obstacle) &&
-				player.x+player.width>obstacle.x || player.x < obstacle.x+obstacle.width)
+				(player.x+player.width>obstacle.x && player.x+player.width<obstacle.x+obstacle.width)
+				|| (player.x>obstacle.x && player.x<obstacle.x+obstacle.width) )
 				return FLOOR_Y - obstacle.height;
 		return FLOOR_Y;
 	}
 
 	function obstacleWithinView(obstacle){
-		if(obstacle.x+obstacle.width < 0 || obstacle.x > 500)
+		if(obstacle.x > 500 || obstacle.x+obstacle.width < 0 )
 			return false;
 		return true;
 	}
@@ -74,11 +80,18 @@
 		}
 	}
 
-	function updateObstacles(){
-		for(let obstacle of obstacles){
-			obstacle.x -= 3;
-		}
-	}
+function updateObstacles(){
+    for(let obstacle of obstacles){
+        obstacle.x -= 3;
+    }
+    if (obstacles[obstacles.length - 1].x + obstacles[obstacles.length - 1].width < c.width) {
+        obstacles.push(createObstacle(randomIntFromInterval(100, 500)));
+    }
+}
+
+function randomIntFromInterval(min, max) { // min and max included 
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
 
 	function paintBackground(){
 		ctx.fillStyle = "lightblue"
@@ -92,24 +105,27 @@
 		c.height = 500;
 	}
 
-	function createObstacle(){
+	function createObstacle(offset){
 		var newObstacle = {};
-		newObstacle.height = 100;
-		newObstacle.width = 100;
-		newObstacle.color = "brown";
-		newObstacle.x = 500;
+		var stone = Math.random() < 0.5;
+		newObstacle.height = Math.floor(Math.random() * 150) + 50;
+		newObstacle.width = Math.floor(Math.random() * (maxWidth - minWidth + 1)) + minWidth;;
+		newObstacle.color = stone ? "lightgray" : "brown";
+		newObstacle.material = stone ? "stone" : "dirt";
+		newObstacle.x = 500 + offset;
 		return newObstacle;
 	}
 
 	function startGame(){
 		gameRun = setInterval(function(){
 				setUp();
-				paintBackground();
-				paintObstacles();
-				updateObstacles();
-				updatePlayer();
-				paintPlayer();
-				console.log("Hey");
+		paintBackground();
+		paintObstacles();
+		paintPlayer();
+		paintBullets();
+		updatePlayer();
+		updateObstacles();
+		updateBullets();
 			}, 10);
 	}
 
@@ -135,6 +151,60 @@
 	    	stopGame();
 	  }
 	}
+
+
+document.addEventListener('keydown', function(event) {
+	if (event.code === 'KeyS') {
+		shootBullet();
+	}
+});
+
+var bullets = [];
+
+function shootBullet() {
+	let bullet = {
+		x: player.x + player.width,
+		y: player.y + player.height / 2,
+		width: 10,
+		height: 10,
+		color: 'red'
+	};
+	bullets.push(bullet);
+}
+
+function paintBullets() {
+	for (let bullet of bullets) {
+		ctx.fillStyle = bullet.color;
+		ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+	}
+}
+
+function updateBullets(){
+  for(let i = 0; i < bullets.length; i++){
+    var bulletHit = false;
+    bullets[i].x += 10;
+    for(let j = 0; j < obstacles.length; j++){
+      if(bullets[i].x >= obstacles[j].x && 
+         bullets[i].x <= obstacles[j].x + obstacles[j].width &&
+         bullets[i].y >= FLOOR_Y - obstacles[j].height && 
+         bullets[i].y <= FLOOR_Y){
+      	if(obstacles[j].material == "dirt")
+        	obstacles.splice(j, 1);
+    	bulletHit = true;
+    	break;
+      }
+    }
+    if(bulletHit) {
+    	bullets.splice(i, 1);
+    	break;
+    }
+    if(bullets[i].x > c.width){
+      bullets.splice(i, 1);
+      i--;
+    }
+  }
+}
+
 </script>
 
 <style type="text/css">
