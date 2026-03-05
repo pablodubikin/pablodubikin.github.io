@@ -10,9 +10,6 @@
 
     <title>Pablo Dubikin</title>
 
-    
-    
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
@@ -59,19 +56,6 @@
 
   <main class="px-3">
 
-<!-- 
-<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-bootstrap-fill">
- <g>
-  <title>Layer 1</title>
-  <path d="m6.375,7.125l0,-2.467l1.78,0c0.973,0 1.542,0.457 1.542,1.237c0,0.802 -0.604,1.23 -1.764,1.23l-1.558,0zm0,3.762l1.898,0c1.184,0 1.81,-0.48 1.81,-1.377c0,-0.885 -0.65,-1.348 -1.886,-1.348l-1.822,0l0,2.725z" id="svg_1"/>
-  <path d="m4.002,0a4,4 0 0 0 -4,4l0,8a4,4 0 0 0 4,4l8,0a4,4 0 0 0 4,-4l0,-8a4,4 0 0 0 -4,-4l-8,0zm1.06,12l0,-8.455l3.399,0c1.587,0 2.543,0.809 2.543,2.11c0,0.884 -0.65,1.675 -1.483,1.816l0,0.1c1.143,0.117 1.904,0.931 1.904,2.033c0,1.488 -1.084,2.396 -2.888,2.396l-3.475,0z" id="svg_2"/>
-  <rect x="4.67951" y="3.10141" width="7.89051" height="9.40612" id="svg_3"/>
-  <text x="4.34801" y="21.97638" id="svg_4" fill="#ffffff" stroke-width="0" font-size="24" font-family="'Dosis'" text-anchor="start" xml:space="preserve" opacity="0.85" stroke="null" transform="rotate(0.0675279 8.2186 7.60173) matrix(0.718371 0 0 0.718371 0.552218 -1.43546)">P</text>
- </g>
-
-</svg>
--->
-
     <!-- <h1>Pablo's page.</h1> -->
     <div class="lead mb-5">Thanks for dropping by :) Click any of the links below to reach me!</div>
     <div class="h1" style="display: flex; justify-content: space-evenly;">
@@ -91,13 +75,18 @@
         <i class="bi bi-telephone" style="color: white;"></i>
       </a>
     </div>
-    <!-- +34626891215 -->
     <div id="info" class="d-none mt-3" style="font-size: 1.5em; margin-left: auto; margin-right: auto; width: fit-content;">
+    </div>
+
+    <div class="mt-5">
+      <p class="text-white-50 mb-3" style="font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;">projects</p>
+      <a href="https://swipemon.com/" class="text-white" style="text-decoration: none;">
+        Swipemon &mdash; an iOS game I made <i class="bi bi-box-arrow-up-right" style="font-size: 0.8em;"></i>
+      </a>
     </div>
   </main>
 
   <footer class="mt-auto text-white-50">
-    <p>More stuff coming soon</p>
   </footer>
 </div>
 
@@ -116,7 +105,7 @@ function showInfo(text, iconName, linkPrefix){
     <div style="display: flex; justify-content: space-around;">
       <i class="bi bi-clipboard" onclick="copyFn(this, '${text}')"></i>
       <a href="${linkPrefix}:${text}"><i class="bi bi-${iconName}" style="color: white;"></i></a>
-      <i class="bi bi-x-lg" onclick="closeInfo()""></i>
+      <i class="bi bi-x-lg" onclick="closeInfo()"></i>
     </div>
   `;
   divInfo.classList.remove('d-none')
